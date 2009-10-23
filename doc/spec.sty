@@ -1,0 +1,26 @@
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[top=2cm,bottom=2cm,left=3cm,right=3cm]{geometry}
+\usepackage{graphicx}
+\usepackage{palatino}
+\usepackage[scaled]{beramono}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{color}
+
+\lstset{
+  language=Lisp,
+  extendedchars=false,
+  float,
+  showstringspaces=false,
+  formfeed=\newpage,
+  tabsize=4,
+  %stringstyle=\itshape,
+  commentstyle=\itshape,
+  basicstyle=\ttfamily,
+  morekeywords={lambda,defstructure,switch,iter}
+}
+
+\newcommand{\todo}[1]{\marginpar{\textcolor{red}{\textbf{[TODO]}}} #1}
