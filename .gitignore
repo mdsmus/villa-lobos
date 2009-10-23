@@ -1,0 +1,7 @@
+villa-lobos
+doc/spec.aux
+doc/spec.dvi
+doc/spec.log
+doc/spec.toc
+*.fasl
+auto
