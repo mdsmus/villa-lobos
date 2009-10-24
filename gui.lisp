@@ -1,12 +1,61 @@
 (in-package :villa-lobos)
 
-(defun print-text ()
-  (format t "Hello World!~&"))
+(defun menu-open-file ()
+  (print :foo))
 
-(defun hello ()
+(defun menu-open-folder ()
+  (print :foo))
+
+(defun menu-open-collection ()
+  (print :foo))
+
+(defun menu-make-collection ()
+  (print :foo))
+
+(defun menu-option-analysis ()
+  (print :foo))
+
+(defun menu-help-about ()
+  (print :foo))
+
+(defun menu-help-tutorial ()
+  (print :foo))
+
+(defun menu ()
+  (let* ((menubar (make-menubar))
+         (mfile (make-menu menubar "File"))
+         (moptions (make-menu menubar "Options"))
+         (mhelp (make-menu menubar "Help")))
+    (make-menubutton mfile "Open File" #'menu-open-file :underline 1)
+    (make-menubutton mfile "Open Folder" #'menu-open-folder :underline 1)
+    (make-menubutton mfile "Open Collection" #'menu-open-collection :underline 1)
+    (add-separator mfile)
+    (make-menubutton mfile "Make Collection" #'menu-make-collection :underline 1)
+    (make-menubutton moptions "Analysis" #'menu-option-analysis :underline 1)
+    (make-menubutton mhelp "Tutorial" #'menu-help-tutorial :underline 1)
+    (make-menubutton mhelp "About" #'menu-help-about :underline 1)
+    ))
+
+(defun gui ()
   (with-ltk ()
-    (let ((b (make-instance 'button 
-                            :master nil
-                            :text "Press Me"
-                            :command #'print-text)))
-      (pack b))))
+    (let* ((fr-left (make-instance 'frame :width 100))
+           (fr-right (make-instance 'frame))
+           (fr-right-top (make-instance 'frame :master fr-right))
+           (fr-right-bottom (make-instance 'frame :master fr-right))
+           (lb1 (make-instance 'listbox :master fr-left :background :white))
+           (sc2 (make-instance 'scrolled-canvas :master fr-right-top))
+           (output (canvas sc2))
+           (stats (make-instance 'text :name "stats" :master fr-right-bottom
+                                 :background :white))
+           )
+      (menu)
+      (pack fr-left :fill :y :side :left)
+      (pack fr-right :side :right :expand 1 :fill :both)
+      (pack fr-right-top :expand 1 :fill :both :side :top)
+      (pack fr-right-bottom :expand 1 :fill :both :side :bottom)
+      (pack lb1 :expand 1 :fill :y)
+      (pack sc2 :expand 1 :fill :both)
+      (pack stats :expand 1 :fill :both)
+      )))
+
+(gui)

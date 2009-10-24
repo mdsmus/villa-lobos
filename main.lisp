@@ -1,7 +1,7 @@
 (in-package :villa-lobos)
 
 (defun main ()
-  (hello))
+  (gui))
 
 (defun run ()
   (setf ltk:*wish-pathname*
