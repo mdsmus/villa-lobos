@@ -5,3 +5,5 @@ doc/spec.log
 doc/spec.toc
 *.fasl
 auto
+bin
+lib
