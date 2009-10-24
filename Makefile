@@ -1,10 +1,10 @@
-LISPFILES = $(wildcard *.lisp)
+LISPFILES = $(wildcard *.lisp) $(wildcard *.asd)
 
 SBCL = sbcl --no-userinit --script compile-sbcl.lisp
 CCL = ccl --batch --load compile-ccl.lisp
 
 LISPCOMPILER = $(SBCL)
-LISPCOMPILER = $(CCL)
+#LISPCOMPILER = $(CCL)
 
 villa-lobos: $(LISPFILES)
 	$(LISPCOMPILER)
