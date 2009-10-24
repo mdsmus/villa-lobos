@@ -1,15 +1,9 @@
 (in-package :villa-lobos)
 
-(defun main-dir ()
-  ;; hack to know the true directory of a file in case the binary is
-  ;; as symlink
-  (directory-namestring (truename (merge-pathnames (app-name)
-                                                   (default-directory)))))
-
 (defun main ()
   (hello))
 
-(defun main-binary ()
+(defun run ()
   (setf ltk:*wish-pathname*
        (join-strings (namestring (main-dir)) "bin/wish"))
   ;; hack to deal with this bug:

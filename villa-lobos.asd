@@ -5,7 +5,7 @@
     :author "Pedro Kroger"
     :version "0.0"
     :serial t
-    :depends-on (:cl-extensions :ltk :swank)
+    :depends-on (:cl-extensions :ltk :swank :aristoxenus)
     :components ((:file "packages")
                  (:file "utils")
                  (:file "gui")
