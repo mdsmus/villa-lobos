@@ -6,6 +6,7 @@ CCL_BINARY = /usr/local/ccl/lx86cl
 
 SBCL = sbcl --no-userinit 
 CCL = ccl --batch
+ECL = ecl -norc
 
 COMPILER = sbcl
 #COMPILER = ccl
@@ -18,6 +19,16 @@ villa-lobos: $(LISPFILES)
 	--eval "(push \"${ALIEN}\" asdf:*central-registry*)" \
 	--eval "(require :villa-lobos)" \
 	--eval "(sb-ext:save-lisp-and-die \"$@\" :executable t :toplevel #'villa-lobos:run)"
+else ifeq ($(COMPILER),ecl)
+villa-lobos: $(LISPFILES)
+	$(ECL) \
+	-eval "(require :asdf)" \
+	-eval "(push \"${ARISTOXENUS}\" asdf:*central-registry*)" \
+	-eval "(push \"${ALIEN}\" asdf:*central-registry*)" \
+	-eval "(require :villa-lobos)" \
+	-eval "(asdf:make-build :$@ :type :program :epilogue-code '(progn (villa:run) (ext:quit)))" \
+	-eval "(ext:quit)"
+	mv villa-lobos-mono villa-lobos
 else ifeq ($(COMPILER),ccl)
 villa-lobos: $(LISPFILES)
 	$(CCL) \
@@ -26,7 +37,6 @@ villa-lobos: $(LISPFILES)
 	--eval "(push \"${ALIEN}\" asdf:*central-registry*)" \
 	--eval "(asdf:oos 'asdf:load-op :villa-lobos)" \
 	--eval "(save-application \"$@\" :toplevel-function #'villa-lobos:run :prepend-kernel \"${CCL_BINARY}\")"
-
 endif
 
 dist: villa-lobos
@@ -36,3 +46,6 @@ clean:
 	rm -f villa-lobos
 	rm -f *.fasl
 	rm -f *.lx32fsl
+	rm -f *.o
+	rm -f *.a
+	rm -f *.fas

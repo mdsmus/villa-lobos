@@ -2,7 +2,8 @@
 
 (defun app-name ()
   (first #+sbcl sb-ext:*posix-argv*
-         #+ccl ccl:*command-line-argument-list*))
+         #+ccl ccl:*command-line-argument-list*
+         #+ecl (ext:command-args)))
 
 (defun main-dir ()
   ;; hack to know the true directory of a file in case the binary is
