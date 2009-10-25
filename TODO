@@ -1,1 +1,6 @@
+* open kern files
+* convert kern to abc
+* generate ps from abs
+* setup scrolling canvas
+* setup scrolling listbox
 * fix aristoxenus vs closer-mop (ccl build)
