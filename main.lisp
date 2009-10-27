@@ -1,6 +1,8 @@
 (in-package :villa-lobos)
 
 (defun main ()
+  (setf ltk:*wish-pathname*
+        (namestring (merge-pathnames "bin/wish" (villa-dev-dir))))
   (gui))
 
 (defun run ()

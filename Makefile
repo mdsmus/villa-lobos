@@ -26,7 +26,7 @@ villa-lobos: $(LISPFILES)
 	-eval "(push \"${ARISTOXENUS}\" asdf:*central-registry*)" \
 	-eval "(push \"${ALIEN}\" asdf:*central-registry*)" \
 	-eval "(require :villa-lobos)" \
-	-eval "(asdf:make-build :$@ :type :program :epilogue-code '(progn (villa:run) (ext:quit)))" \
+	-eval "(asdf:make-build :$@ :type :program :monolithic t :epilogue-code '(progn (villa:run) (ext:quit)))" \
 	-eval "(ext:quit)"
 	mv villa-lobos-mono villa-lobos
 else ifeq ($(COMPILER),ccl)

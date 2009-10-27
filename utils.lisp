@@ -11,3 +11,23 @@
   ;; returning the full name.
   (directory-namestring (truename (merge-pathnames (app-name)
                                                    (default-directory)))))
+
+(defun villa-dev-dir ()
+  (asdf:component-pathname (asdf:find-system :villa-lobos)))
+
+(defmacro make-easy-menu (list)
+  (let ((menubar (gensym)))
+    `(let ((,menubar (make-menubar)))
+       (progn
+         ,@(mapcar (lambda (menu)
+                     (destructuring-bind (name &rest rest) menu
+                       (let ((i (gensym)))
+                         `(let ((,i (make-menu ,menubar ,name)))
+                            (progn
+                              ,@(mapcar (lambda (item)
+                                          (if (listp item)
+                                              (destructuring-bind (n fn un) item
+                                                `(make-menubutton ,i ,n ,fn :underline ,un))
+                                              `(add-separator ,i)))
+                                        rest))))))
+                   list)))))
