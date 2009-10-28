@@ -8,6 +8,7 @@
   ((width :accessor width :initarg :width)
    (frame :accessor frame)
    (listbox :accessor listbox)
+   (master :accessor master :initarg :master)
    (frame-text :accessor frame-text :initarg :frame-text)
    (frame-font :accessor frame-font :initarg :frame-font)))
 
@@ -15,6 +16,7 @@
   ((frame :accessor frame)
    (canvas :accessor canvas)
    (score :accessor score)
+   (master :accessor master :initarg :master)
    (frame-text :accessor frame-text :initarg :frame-text)
    (frame-font :accessor frame-font :initarg :frame-font)))
 
@@ -22,6 +24,7 @@
   ((frame :accessor frame)
    (text :accessor text)
    (height :accessor height :initarg :height)
+   (master :accessor master :initarg :master)
    (frame-text :accessor frame-text :initarg :frame-text)
    (frame-font :accessor frame-font :initarg :frame-font)))
 
@@ -40,16 +43,17 @@
 (defmethod initialize-instance :after ((obj listboxframe) &key)
   (setf (frame obj)
         (make-instance 'labelframe :text (frame-text obj) :padx 10 :pady 10
-                       :width (width obj) :font (frame-font obj)))
+                       :width (width obj) :font (frame-font obj) :master (master obj)))
   (setf (listbox obj)
         (make-instance 'listbox :background :white :master (frame obj))))
 
 (defmethod initialize-instance :after ((obj canvasframe) &key)
   (setf (frame obj)
         (make-instance 'labelframe :text (frame-text obj) :padx 10 :pady 10
-                       :font (frame-font obj)))
+                       :font (frame-font obj) :master (master obj)))
   (setf (canvas obj)
         (make-instance 'canvas :master (frame obj) :background :white))
+  (canvas (canvas obj))
   (setf (score obj)
         (make-instance 'photo-image)))
 
@@ -57,7 +61,7 @@
   (setf (frame obj)
         (make-instance 'labelframe :text (frame-text obj)
                        :padx 10 :pady 10 :font (frame-font obj)
-                       :height (height obj)))
+                        :master (master obj) :height (height obj)))
   (setf (text obj)
         (make-instance 'text :master (frame obj) :background :white
                        :height (height obj))))
@@ -65,7 +69,8 @@
 (defmethod initialize-instance :after ((obj main-gui) &key)
   (menu)
   (setf (frame-left obj)
-        (make-instance 'frame :padx (pad obj) :pady (pad obj)))
+        (make-instance 'frame :padx (pad obj) :pady (pad obj)
+                       :width (file-list-width obj)))
   (setf (frame-right obj)
         (make-instance 'frame :padx (pad obj) :pady (pad obj)))
   (setf (file-list obj)

@@ -46,4 +46,7 @@
     (send-wish "package require Img")
     (wm-title *tk* "Villa-lobos")
     (let ((w (make-instance 'main-gui)))
-      (pack w))))
+      (pack w)
+      (image-load (score (music-display w)) "Out.ps")
+      (create-image (canvas (music-display w)) 0 0 :image (score (music-display w)))
+)))
