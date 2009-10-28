@@ -29,7 +29,7 @@
    (frame-font :accessor frame-font :initarg :frame-font)))
 
 (defclass main-gui (widget)
-  ((frame-font :accessor frame-font :initarg :frame-font :initform "Monospace-10")
+  ((frame-font :accessor frame-font :initarg :frame-font)
    (file-list-width :accessor file-list-width :initarg :file-list-width :initform 20)
    (frame-left :accessor frame-left :initarg :frame-left)
    (frame-right :accessor frame-right :initarg :frame-right)
