@@ -2,51 +2,45 @@
 
 (declaim (optimize (debug 3)))
 
-(defun menu-open-file ()
+(defun menu-open-file (w)
+  ;; FIXME to work with slime and CLI (villa-dev-dir)
+  (let1 file (get-open-file :filetypes '(("Humdrum files" "*.krn"))
+                            :initialdir (villa-dev-dir))
+    (setf (files-kern w) file)
+    ;;(setf (image w) (parse-humdrum-file file))
+    (filelist-append-item w (pathname-name file))
+    (stats-append-item w "foo")
+    (display-insert-image w "Out.ps")
+    ))
+
+(defun menu-open-folder (w)
+  (print (files-kern w))
+  )
+
+(defun menu-open-collection (w)
+  (declare (ignore w))
   (print :foo))
 
-(defun menu-open-folder ()
-  (choose-directory))
-
-(defun menu-open-collection ()
+(defun menu-make-collection (w)
+  (declare (ignore w))
   (print :foo))
 
-(defun menu-make-collection ()
+(defun menu-option-analysis (w)
+  (declare (ignore w))
   (print :foo))
 
-(defun menu-option-analysis ()
+(defun menu-help-about (w)
+  (declare (ignore w))
   (print :foo))
 
-(defun menu-help-about ()
+(defun menu-help-tutorial (w)
+  (declare (ignore w))
   (print :foo))
-
-(defun menu-help-tutorial ()
-  (print :foo))
-
-(defun menu ()
-  (make-easy-menu (("File"
-                    ("Open file" #'choose-directory 1)
-                    ("Open folder" #'menu-open-folder 1)
-                    ("Open collection" #'menu-open-folder 1)
-                    -----------------
-                    ("Quit" #'quit 1))
-                   ("Options"
-                    ("Open file" #'choose-directory 1))
-                   ("Collections"
-                    ("Make collection" #'choose-directory 1)
-                    ("Open collection" #'menu-open-folder 1))
-                   ("Analysis"
-                    ("Open file" #'choose-directory 1))
-                   ("Help"
-                    ("Tutorial" #'choose-directory 1)
-                    ("about" #'menu-open-folder 1)))))
 
 (defun gui ()
   (with-ltk ()
     (send-wish "package require Img")
     (wm-title *tk* "Villa-lobos")
-    (let ((w (make-instance 'main-gui :frame-font "Monospace-10")))
-      (pack w)
-      (image-load (score (music-display w)) "Out.ps")
-      (create-image (canvas (music-display w)) 0 0 :image (score (music-display w)))
-      )))
+    (pack (make-instance 'gui
+                         :frame-font "Monospace-10" :pad 10
+                         :filelist-width 20 :stats-height 8))))

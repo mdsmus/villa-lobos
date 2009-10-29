@@ -26,8 +26,11 @@
                             (progn
                               ,@(mapcar (lambda (item)
                                           (if (listp item)
-                                              (destructuring-bind (n fn un) item
-                                                `(make-menubutton ,i ,n ,fn :underline ,un))
+                                              (destructuring-bind (n (fn &rest args) un) item
+                                                `(make-menubutton ,i
+                                                                  ,n
+                                                                  (lambda () (,fn ,@args))
+                                                                  :underline ,un))
                                               `(add-separator ,i)))
                                         rest))))))
                    list)))))

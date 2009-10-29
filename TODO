@@ -1,3 +1,5 @@
+# -*- org -*-
+
 * open kern files
 * convert kern to abc
 * generate ps from abs
