@@ -2,25 +2,11 @@
 
 (declaim (optimize (debug 3)))
 
-(defun menu (w)
-  (make-easy-menu (("File"
-                    ("Open file" (menu-open-file w) 1)
-                    ("Open folder" (menu-open-folder w) 1)
-                    ("Open collection" (menu-open-folder w) 1)
-                    -----------------
-                    ("Quit" (quit) 1))
-                   ("Options"
-                    ("Open file" (menu-open-file w) 1))
-                   ("Collections"
-                    ("Make collection" (menu-open-file w) 1)
-                    ("Open collection" (menu-open-folder w) 1))
-                   ("Analysis"
-                    ("Open file" (menu-open-folder w) 1))
-                   ("Help"
-                    ("Tutorial" (menu-open-folder w) 1)
-                    ("about" (menu-open-folder w) 1)))))
+(defvar *gui*)
 
-(defclass gui ()
+;;; define basic gui
+
+(defclass gui (widget)
   ((filelist :accessor filelist)
    (display :accessor display)
    (stats :accessor stats)
@@ -46,13 +32,15 @@
                              (filelist-delete-item gui s))))
     (make-menubutton mp "foo2" (lambda () (print :bar)))
     (make-menubutton mp "foo3" (lambda () (print :bar)))
-    (make-menubutton mp "foo4" (lambda () (print :bar)))
-    (bind (filelist gui) "<ButtonPress-3>"
+    (make-menubutton mp "foo5" (lambda () (print :bar)))
+    (filelist-configure gui :selectmode :single)
+    (bind (get-filelist gui) "<ButtonPress-3>"
           (lambda (event)
             (declare (ignore event))
-            (popup mp
-                   (+ 3 (screen-mouse-x (filelist gui)))
-                   (+ 3 (screen-mouse-y (filelist gui))))))))
+            (if (filelist-get-selection gui)
+                (popup mp
+                       (+ 3 (screen-mouse-x (get-filelist gui)))
+                       (+ 3 (screen-mouse-y (get-filelist gui)))))))))
 
 (defmethod initialize-instance :after ((obj gui) &key)
   ;; menu
@@ -70,7 +58,7 @@
                        :width (filelist-width obj) :font (frame-font obj)
                        :master (frame-left obj)))
   (setf (filelist obj)
-        (make-instance 'listbox :background :white :master (frame-filelist obj)))
+        (make-instance 'scrolled-listbox :background :white :master (frame-filelist obj)))
   (listbox-popup obj)
   ;; display
   (setf (frame-display obj)
@@ -101,26 +89,66 @@
   (pack (frame-stats obj) :fill :x :side :bottom)
   (pack (stats obj) :expand 1 :fill :x))
 
+(defun menu (w)
+  (make-easy-menu (("File"
+                    ("Open file" (menu-open-file w) 1)
+                    ("Open folder" (menu-open-folder w) 1)
+                    ("Open collection" (menu-open-collection w) 1)
+                    -----------------
+                    ("Quit" (quit) 1))
+                   ("Options"
+                    ("Open file" (menu-open-file w) 1))
+                   ("Collections"
+                    ("Make collection" (menu-open-file w) 1)
+                    ("Open collection" (menu-open-folder w) 1))
+                   ("Analysis"
+                    ("Open file" (menu-open-folder w) 1))
+                   ("Help"
+                    ("Tutorial" (menu-open-folder w) 1)
+                    ("about" (menu-open-folder w) 1)))))
+
+;;; extend ltk
+
+(defun choose-directory (&key (initialdir (namestring *default-pathname-defaults*))
+			      parent title mustexist)
+  (format-wish "senddatastring [tk_chooseDirectory ~@[ -initialdir {~a}~]~@[ -parent ~a ~]~@[ -title {~a}~]~@[ -mustexist ~a~]]" initialdir (and parent (widget-path parent)) title (and mustexist 1))
+  (ltk::read-data))
 
 (defgeneric listbox-delete (l start &optional end))
 (defmethod listbox-delete ((l listbox) start &optional end)
   (format-wish "~a delete ~a ~@[~a~]" (widget-path l) start end)
   l)
 
+(defgeneric listbox-activate (l index))
+(defmethod listbox-activate ((l listbox) index)
+  (format-wish "~a activate ~a" (widget-path l) index)
+  l)
+
+;;; methods on gui
+
+(defmethod get-filelist ((gui gui))
+  (listbox (filelist gui)))
+
 (defmethod filelist-append-item ((gui gui) thing)
-  (listbox-append (filelist gui) thing))
+  (listbox-append (get-filelist gui) thing))
 
 (defmethod filelist-delete-item ((gui gui) start &optional end)
-  (listbox-delete (filelist gui) start end))
+  (listbox-delete (get-filelist gui) start end))
 
 (defmethod filelist-get-selection ((gui gui))
-  (listbox-get-selection (filelist gui)))
+  (listbox-get-selection (get-filelist gui)))
 
 (defmethod filelist-clear ((gui gui))
-  (listbox-clear (filelist gui)))
+  (listbox-clear (get-filelist gui)))
 
 (defmethod filelist-nearest ((gui gui) y)
-  (listbox-nearest (filelist gui) y))
+  (listbox-nearest (get-filelist gui) y))
+
+(defmethod filelist-activate ((gui gui) index)
+  (listbox-nearest (get-filelist gui) index))
+
+(defmethod filelist-configure ((gui gui) option value)
+  (configure (get-filelist gui) option value))
 
 (defmethod stats-append-item ((gui gui) thing)
   (append-text (stats gui) thing))
@@ -149,8 +177,9 @@
     ))
 
 (defun menu-open-folder (w)
-  (print (files-kern w))
-  )
+  (let1 dir (pathname-as-directory (choose-directory))
+    (filelist-append-item w (mapcar #'pathname-name
+                                    (directory (merge-pathnames "*.krn" dir))))))
 
 (defun menu-open-collection (w)
   (declare (ignore w))
@@ -173,9 +202,12 @@
   (print :foo))
 
 (defun gui ()
-  (with-ltk ()
-    (send-wish "package require Img")
-    (wm-title *tk* "Villa-lobos")
-    (pack (make-instance 'gui
-                         :frame-font "Monospace-10" :pad 10
-                         :filelist-width 20 :stats-height 8))))
+  (start-wish)
+  (send-wish "package require Img")
+  ;;(send-wish "option add *background gray100")
+  (wm-title *tk* "Villa-lobos")
+  (setf *gui* (make-instance 'gui
+                             :frame-font "Monospace-10" :pad 10
+                             :filelist-width 20 :stats-height 8))
+  (pack *gui*)
+  (mainloop))
