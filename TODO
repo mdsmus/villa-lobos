@@ -1,8 +1,8 @@
 # -*- org -*-
 
+* don't repeat accidentals
+* show statistics
 * document system (.tex)
-* implement functions
-  display
 * multi pages ps files
 * fix aristoxenus vs closer-mop (ccl build)
   Error: Class named CL-EXTENSIONS::NOT-IMPLEMENTED not found.
