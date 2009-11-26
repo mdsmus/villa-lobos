@@ -1,9 +1,15 @@
 # -*- org -*-
 
-* open kern files
-* convert kern to abc
-* generate ps from abs
+* make a commit
+* fix bug display scores (nil)
+* document system (.tex)
+* implement functions
+  display
+* click to show score (display)
 * setup scrolling canvas
-* setup scrolling listbox
 * how about multi page ps files?
 * fix aristoxenus vs closer-mop (ccl build)
+  Error: Class named CL-EXTENSIONS::NOT-IMPLEMENTED not found.
+  While executing: FIND-CLASS, in process toplevel(2).
+* build system independent of user
+  there's a few things that is kroger specific

@@ -8,6 +8,7 @@
     :depends-on (:cl-extensions :ltk :swank :aristoxenus)
     :components ((:file "packages")
                  (:file "utils")
+                 (:file "operations")
                  (:file "gui")
                  (:file "main")))
 

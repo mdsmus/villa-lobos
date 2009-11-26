@@ -2,7 +2,8 @@ LISPFILES = $(wildcard *.lisp) $(wildcard *.asd)
 
 ARISTOXENUS = /home/kroger/src/aristoxenus/
 ALIEN = /home/kroger/src/cl-distribution/src/
-CCL_BINARY = /usr/local/ccl/lx86cl
+#CCL_BINARY = /usr/local/ccl/lx86cl
+CCL_BINARY = /usr/local/ccl/lx86cl64
 
 SBCL = sbcl --no-userinit 
 CCL = ccl --batch
@@ -49,3 +50,6 @@ clean:
 	rm -f *.o
 	rm -f *.a
 	rm -f *.fas
+
+backup:
+	rsync -av  --progress --stats --delete . /media/kroger/villa-lobos/

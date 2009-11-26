@@ -10,13 +10,18 @@
   ((filelist :accessor filelist)
    (display :accessor display)
    (stats :accessor stats)
+   (repl :accessor repl)
    (image :accessor image)
+   (statusbar :accessor statusbar)
    ;; frames
    (frame-left :accessor frame-left)
    (frame-right :accessor frame-right)
+   (frame-top :accessor frame-top)
+   (frame-bottom :accessor frame-bottom)
    (frame-filelist :accessor frame-filelist)
    (frame-display :accessor frame-display)
    (frame-stats :accessor frame-stats)
+   (frame-repl :accessor frame-repl)
    ;; options
    (files-kern :accessor files-kern)
    (filelist-width :accessor filelist-width :initarg :filelist-width)
@@ -31,9 +36,14 @@
                        (loop for s in (filelist-get-selection gui) do
                              (filelist-delete-item gui s))))
     (make-menubutton mp "foo2" (lambda () (print :bar)))
-    (make-menubutton mp "foo3" (lambda () (print :bar)))
-    (make-menubutton mp "foo5" (lambda () (print :bar)))
     (filelist-configure gui :selectmode :single)
+    (bind (get-filelist gui) "<ButtonPress-1>"
+          (lambda (event)
+            (declare (ignore event))
+            (let1 score (get-score (first (filelist-get-selection gui)))
+              (score-to-ps score)
+              (display-insert-image gui (%output-pathname score "ps")))))
+    
     (bind (get-filelist gui) "<ButtonPress-3>"
           (lambda (event)
             (declare (ignore event))
@@ -46,11 +56,15 @@
   ;; menu
   (menu obj)
   ;; basic frames
+  (setf (frame-top obj) (make-instance 'frame))
+  (setf (frame-bottom obj) (make-instance 'frame))
   (setf (frame-left obj)
         (make-instance 'frame
-                       :padx (pad obj) :pady (pad obj) :width (filelist-width obj)))
+                       :padx (pad obj) :pady (pad obj) :width (filelist-width obj)
+                       :master (frame-top obj)))
   (setf (frame-right obj)
-        (make-instance 'frame :padx (pad obj) :pady (pad obj)))
+        (make-instance 'frame :padx (pad obj) :pady (pad obj) :master (frame-top obj)))
+
   ;; filelist
   (setf (frame-filelist obj)
         (make-instance 'labelframe
@@ -77,17 +91,46 @@
   (setf (stats obj)
         (make-instance 'text
                        :background :white :height (stats-height obj)
-                       :master (frame-stats obj))))
+                       :width 50 :master (frame-stats obj)))
+  ;; repl
+  (setf (frame-repl obj)
+        (make-instance 'labelframe
+                       :text "Listener" :padx (pad obj) :pady (pad obj)
+                       :font (frame-font obj) :height (stats-height obj)
+                       :master (frame-right obj)))
+  (setf (repl obj)
+        (make-instance 'text
+                       :background :white :height (stats-height obj)
+                       :master (frame-repl obj)))
+  (bind (repl obj) "<Return>" (lambda (event)
+                                (declare (ignore event))
+                                (print (get-cursor-pos (repl obj)))
+                                (append-text (repl obj) "> ")))
+  (setf (text (repl obj)) "> ")
+  ;; statusbar
+  (setf (statusbar obj)
+        (make-instance 'label
+                       :name "statusbar" :relief :sunken :anchor :w
+                       :master (frame-bottom obj))))
+
+(defmethod get-cursor-pos ((text text))
+  (format-wish "senddatastring [~a index insert]" (widget-path text))
+  (ltk::read-data))
 
 (defmethod pack ((obj gui) &key &allow-other-keys)
+  (pack (frame-top obj) :side :top :expand 1 :fill :both)
+  (pack (frame-bottom obj) :side :bottom :fill :x)
   (pack (frame-left obj) :fill :y :side :left)
   (pack (frame-right obj) :side :right :expand 1 :fill :both)
   (pack (frame-filelist obj) :fill :y :side :left)
   (pack (filelist obj) :expand 1 :fill :y :side :bottom)
   (pack (frame-display obj) :expand 1 :fill :both :side :top)
   (pack (display obj) :expand 1 :fill :both)
-  (pack (frame-stats obj) :fill :x :side :bottom)
-  (pack (stats obj) :expand 1 :fill :x))
+  (pack (frame-stats obj) :fill :x :side :left)
+  (pack (stats obj) :expand 1 :fill :x)
+  (pack (frame-repl obj) :fill :x :side :right)
+  (pack (repl obj) :expand 1 :fill :x)
+  (pack (statusbar obj) :expand 1 :fill :x))
 
 (defun menu (w)
   (make-easy-menu (("File"
@@ -165,6 +208,12 @@
 
 ;;; operations
 
+(defun statusbar-update (text)
+ (format-wish "set text_statusbar {  ~a}" text))
+
+(defun statusbar-clean ()
+ (format-wish "set text_statusbar {}"))
+
 (defun menu-open-file (w)
   ;; FIXME to work with slime and CLI (villa-dev-dir)
   (let1 file (get-open-file :filetypes '(("Humdrum files" "*.krn"))
@@ -172,14 +221,18 @@
     (setf (files-kern w) file)
     ;;(setf (image w) (parse-humdrum-file file))
     (filelist-append-item w (pathname-name file))
-    (stats-append-item w "foo")
-    (display-insert-image w "Out.ps")
+    (statusbar-update (strcat "file " (pathname-name file) " openend"))
+    ;;(setf (text (statusbar w)) "foo")
+    ;;(stats-append-item w "foo")
+    ;;(display-insert-image w "/tmp/bar.ps")
     ))
 
 (defun menu-open-folder (w)
-  (let1 dir (pathname-as-directory (choose-directory))
-    (filelist-append-item w (mapcar #'pathname-name
-                                    (directory (merge-pathnames "*.krn" dir))))))
+  (let1 dir (choose-directory :initialdir (villa-dev-dir))
+    (statusbar-update "Parsing files ...")
+    (open-folder (pathname-as-directory dir))
+    (statusbar-update "Files opened ...")
+    (filelist-append-item w (mapcar #'cdr (files *options*)))))
 
 (defun menu-open-collection (w)
   (declare (ignore w))
@@ -202,12 +255,14 @@
   (print :foo))
 
 (defun gui ()
-  (start-wish)
-  (send-wish "package require Img")
+  ;;(start-wish)
+  (with-ltk ()
+   (send-wish "package require Img")
   ;;(send-wish "option add *background gray100")
-  (wm-title *tk* "Villa-lobos")
-  (setf *gui* (make-instance 'gui
-                             :frame-font "Monospace-10" :pad 10
-                             :filelist-width 20 :stats-height 8))
-  (pack *gui*)
-  (mainloop))
+   (wm-title *tk* "Villa-lobos")
+   (setf *gui* (make-instance 'gui
+                              :frame-font "Monospace-10" :pad 10
+                              :filelist-width 20 :stats-height 8))
+   (pack *gui*))
+  ;;(mainloop)
+  )
