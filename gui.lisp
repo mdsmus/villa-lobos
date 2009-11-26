@@ -13,6 +13,7 @@
    (repl :accessor repl)
    (image :accessor image)
    (statusbar :accessor statusbar)
+   (scanvas :accessor scanvas)
    ;; frames
    (frame-left :accessor frame-left)
    (frame-right :accessor frame-right)
@@ -79,8 +80,10 @@
         (make-instance 'labelframe
                        :text "Display" :padx (pad obj) :pady (pad obj)
                        :font (frame-font obj) :master (frame-right obj)))
+  (setf (scanvas obj)
+        (make-instance 'scrolled-canvas :master (frame-display obj) :background :white))
   (setf (display obj)
-        (make-instance 'canvas :master (frame-display obj) :background :white))
+        (canvas (scanvas obj)))
   (setf (image obj) (make-instance 'photo-image))
   ;; stats
   (setf (frame-stats obj)
@@ -125,7 +128,7 @@
   (pack (frame-filelist obj) :fill :y :side :left)
   (pack (filelist obj) :expand 1 :fill :y :side :bottom)
   (pack (frame-display obj) :expand 1 :fill :both :side :top)
-  (pack (display obj) :expand 1 :fill :both)
+  (pack (scanvas obj) :expand 1 :fill :both)
   (pack (frame-stats obj) :fill :x :side :left)
   (pack (stats obj) :expand 1 :fill :x)
   (pack (frame-repl obj) :fill :x :side :right)
@@ -218,20 +221,15 @@
   ;; FIXME to work with slime and CLI (villa-dev-dir)
   (let1 file (get-open-file :filetypes '(("Humdrum files" "*.krn"))
                             :initialdir (villa-dev-dir))
-    (setf (files-kern w) file)
-    ;;(setf (image w) (parse-humdrum-file file))
-    (filelist-append-item w (pathname-name file))
-    (statusbar-update (strcat "file " (pathname-name file) " openend"))
-    ;;(setf (text (statusbar w)) "foo")
-    ;;(stats-append-item w "foo")
-    ;;(display-insert-image w "/tmp/bar.ps")
-    ))
+    (open-file file)
+    (filelist-append-item w (mapcar #'cdr (files *options*)))
+    (statusbar-update (strcat "file " (pathname-name file) " openend"))))
 
 (defun menu-open-folder (w)
   (let1 dir (choose-directory :initialdir (villa-dev-dir))
     (statusbar-update "Parsing files ...")
     (open-folder (pathname-as-directory dir))
-    (statusbar-update "Files opened ...")
+    (statusbar-update "Files opened.")
     (filelist-append-item w (mapcar #'cdr (files *options*)))))
 
 (defun menu-open-collection (w)
@@ -255,14 +253,14 @@
   (print :foo))
 
 (defun gui ()
-  ;;(start-wish)
-  (with-ltk ()
-   (send-wish "package require Img")
+  (exit-wish)
+  (start-wish)
+  (send-wish "package require Img")
   ;;(send-wish "option add *background gray100")
-   (wm-title *tk* "Villa-lobos")
-   (setf *gui* (make-instance 'gui
-                              :frame-font "Monospace-10" :pad 10
-                              :filelist-width 20 :stats-height 8))
-   (pack *gui*))
-  ;;(mainloop)
-  )
+  (wm-title *tk* "Villa-lobos")
+  (setf *gui* (make-instance 'gui
+                             :frame-font "Monospace-10" :pad 10
+                             :filelist-width 20 :stats-height 8))
+  (pack *gui*)
+  (scrollregion (display *gui*) 0 0 800 800)
+  (mainloop))

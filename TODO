@@ -1,13 +1,9 @@
 # -*- org -*-
 
-* make a commit
-* fix bug display scores (nil)
 * document system (.tex)
 * implement functions
   display
-* click to show score (display)
-* setup scrolling canvas
-* how about multi page ps files?
+* multi pages ps files
 * fix aristoxenus vs closer-mop (ccl build)
   Error: Class named CL-EXTENSIONS::NOT-IMPLEMENTED not found.
   While executing: FIND-CLASS, in process toplevel(2).

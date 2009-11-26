@@ -78,7 +78,7 @@
                  :type type))
 
 (defun score-to-abc (score)
-  (export-abc (%output-pathname score "abc") score))
+  (export-abc (%output-pathname score "abc") score :as-chorale))
 
 (defun score-to-ps (score)
   (score-to-abc score)
