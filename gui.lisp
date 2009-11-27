@@ -42,6 +42,7 @@
           (lambda (event)
             (declare (ignore event))
             (let1 score (get-score (first (filelist-get-selection gui)))
+              (show-statistics score gui)
               (score-to-ps score)
               (display-insert-image gui (%output-pathname score "ps")))))
     
@@ -216,6 +217,28 @@
 
 (defun statusbar-clean ()
  (format-wish "set text_statusbar {}"))
+
+(defun append-line (txt label data)
+  (append-text txt (format nil "~a ~a~%" label data)))
+
+(defun count-item (fn score)
+  (reduce #'+ (map 'list
+                   (lambda (spine) (count-if fn (get-data spine)))
+                   (get-spines score))))
+
+(defun show-statistics (score w)
+  (let ((data-tokens (count-item #'spine-objects-p score))
+        (null-tokens (count-item #'null-token-p score))
+        (multiple-stops (count-item #'multiple-stop-p score))
+        (notes (count-item #'note-p score)))
+    (clear-text (stats w))
+    (append-line (stats w) "records:" (length (get-records score)))
+    (append-line (stats w) "spines:" (length (get-spines score)))
+    (append-line (stats w) "comments:" (length (get-global-comments score)))
+    (append-line (stats w) "data tokens:" data-tokens)
+    (append-line (stats w) "notes:" notes)
+    (append-line (stats w) "null tokens:" null-tokens)
+    (append-line (stats w) "multiple stops:" multiple-stops)))
 
 (defun menu-open-file (w)
   ;; FIXME to work with slime and CLI (villa-dev-dir)
