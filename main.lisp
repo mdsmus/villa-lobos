@@ -2,8 +2,7 @@
 
 (defun main ()
   (open-user-configuration)
-  (setf ltk:*wish-pathname*
-        (namestring (merge-pathnames "bin/wish" (villa-dev-dir))))
+  (setf ltk:*wish-pathname* (namestring *wish-binary*))
   (gui))
 
 (defun run ()
@@ -15,7 +14,6 @@
   (if (equal (first (argv)) "--nogui")
       (loop (print (eval (read))))
       (progn
-        (setf ltk:*wish-pathname*
-              (join-strings (namestring (main-dir)) "bin/wish"))
+        (setf ltk:*wish-pathname* (namestring *wish-binary*))
         (gui)))
   0)

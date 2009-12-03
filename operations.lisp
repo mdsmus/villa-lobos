@@ -21,8 +21,8 @@
 (defvar *user-config-file* (merge-pathnames ".villarc" (user-homedir-pathname)))
 (defvar *user-config-dir* (merge-pathnames ".villa/" (user-homedir-pathname)))
 (defvar *options* (make-instance 'options))
-
-;;;
+(defvar *wish-binary* (merge-pathnames "bin/wish" (villa-dev-dir)))
+(defvar *abcm2ps-binary* (merge-pathnames "bin/abcm2ps" (villa-dev-dir)))
 
 (defun open-user-configuration ()
   (ensure-directories-exist *user-config-dir*)
@@ -68,7 +68,7 @@
 
 (defun abc-to-ps (abc-file ps-file)
   ;; FIXME full pathname
-  (run-prog "/home/kroger/src/villa-lobos/bin/abcm2ps"
+  (run-prog (namestring *abcm2ps-binary*)
             :args (list "-O" (namestring ps-file) (namestring abc-file))))
 
 (defun %output-pathname (score type)

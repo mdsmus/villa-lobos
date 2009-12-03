@@ -40,9 +40,6 @@ villa-lobos: $(LISPFILES)
 	--eval "(save-application \"$@\" :toplevel-function #'villa-lobos:run :prepend-kernel \"${CCL_BINARY}\")"
 endif
 
-dist: villa-lobos
-	tar czf villa-lobos.tar.gz villa-lobos /usr/lib/libtk8.5.so.0 /usr/lib/libtcl8.5.so.0 /usr/bin/wish8.5 /usr/bin/tclsh8.5 
-
 clean:
 	rm -f villa-lobos
 	rm -f *.fasl
