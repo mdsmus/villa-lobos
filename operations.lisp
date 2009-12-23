@@ -69,7 +69,7 @@
 (defun abc-to-ps (abc-file ps-file)
   ;; FIXME full pathname
   (run-prog (namestring *abcm2ps-binary*)
-            :args (list "-O" (namestring ps-file) (namestring abc-file))))
+            :args (list "-r" "-J" "0" "-O" (namestring ps-file) (namestring abc-file))))
 
 (defun %output-pathname (score type)
   (concatenate 'string)
@@ -78,7 +78,8 @@
                  :type type))
 
 (defun score-to-abc (score)
-  (export-abc (%output-pathname score "abc") score :as-chorale))
+  ;; we don't export to 2 staves now because of bug on export-abc
+  (export-abc (%output-pathname score "abc") score t))
 
 (defun score-to-ps (score)
   (score-to-abc score)
