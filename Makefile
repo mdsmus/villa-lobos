@@ -58,7 +58,7 @@ deps/cl-distribution:
 
 get-deps: deps/aristoxenus deps/cl-distribution
 	wget -c -P deps http://kroger.genos.mus.br/villa/villa-deps.tar.gz
-	wget -c -P deps http://kroger.genos.mus.br/villa/371chorales.tar.gz
+	wget -c http://kroger.genos.mus.br/villa/371chorales.tar.gz
 	wget -c -O deps/aristoxenus.tar.gz http://git.genos.mus.br/cgit.cgi?url=aristoxenus/snapshot/aristoxenus-master.tar.gz
 	wget -c -O deps/cl-distribution.tar.gz http://git.genos.mus.br/cgit.cgi?url=cl-distribution/snapshot/cl-distribution-master.tar.gz
 	tar xzf 371chorales.tar.gz

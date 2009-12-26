@@ -1,3 +1,8 @@
+Install a recent version of SBCL. I recommend downloading a binary
+from the SBCL site and NOT using a debian/ubuntu package:
+
+http://www.sbcl.org/platform-table.html
+
 To compile with sbcl run
 
    make get-deps make
