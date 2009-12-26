@@ -1,0 +1,5 @@
+To compile with sbcl run
+
+   make get-deps make
+
+It will get all dependencies and compile a binary.

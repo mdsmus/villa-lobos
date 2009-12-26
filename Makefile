@@ -1,7 +1,8 @@
 LISPFILES = $(wildcard *.lisp) $(wildcard *.asd)
 
-ARISTOXENUS = /home/kroger/src/aristoxenus/
-ALIEN = /home/kroger/src/cl-distribution/src/
+DEPS=deps
+ARISTOXENUS = $(DEPS)/aristoxenus/
+ALIEN = $(DEPS)/cl-distribution/src/
 #CCL_BINARY = /usr/local/ccl/lx86cl
 CCL_BINARY = /usr/local/ccl/lx86cl64
 
@@ -42,11 +43,28 @@ endif
 
 clean:
 	rm -f villa-lobos
-	rm -f *.fasl
-	rm -f *.lx32fsl
+	find -name "*.fasl" | xargs rm -f
+	find -name "*.lx64fsl" | xargs rm -f
+	find -name "*.lx32fsl" | xargs rm -f
 	rm -f *.o
 	rm -f *.a
 	rm -f *.fas
+
+deps/aristoxenus:
+	mkdir -p deps/aristoxenus
+
+deps/cl-distribution:
+	mkdir -p deps/cl-distribution
+
+get-deps: deps/aristoxenus deps/cl-distribution
+	wget -c -P deps http://kroger.genos.mus.br/villa/villa-deps.tar.gz
+	wget -c -P deps http://kroger.genos.mus.br/villa/371chorales.tar.gz
+	wget -c -O deps/aristoxenus.tar.gz http://git.genos.mus.br/cgit.cgi?url=aristoxenus/snapshot/aristoxenus-master.tar.gz
+	wget -c -O deps/cl-distribution.tar.gz http://git.genos.mus.br/cgit.cgi?url=cl-distribution/snapshot/cl-distribution-master.tar.gz
+	tar xzf 371chorales.tar.gz
+	cd deps && tar xzf villa-deps.tar.gz
+	cd deps && tar xzf aristoxenus.tar.gz -C aristoxenus
+	cd deps && tar xzf cl-distribution.tar.gz -C cl-distribution
 
 backup:
 	rsync -av  --progress --stats --delete . /media/kroger/villa-lobos/
