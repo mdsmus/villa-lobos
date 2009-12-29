@@ -50,6 +50,15 @@ clean:
 	rm -f *.a
 	rm -f *.fas
 
+villa:
+	mkdir villa
+
+dist: villa-lobos villa
+	cp villa-lobos villa
+	cp -Rv deps/bin villa/deps/
+	cp -Rv deps/lib villa/deps/
+	tar czf villa.tar.gz villa
+
 deps/aristoxenus:
 	mkdir -p deps/aristoxenus
 
