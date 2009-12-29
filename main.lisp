@@ -2,7 +2,7 @@
 
 (defun main ()
   (open-user-configuration)
-  (setf ltk:*wish-pathname* (namestring *wish-binary*))
+  (setf ltk:*wish-pathname* (namestring (wish-binary)))
   (gui))
 
 (defun run ()
@@ -14,6 +14,6 @@
   (if (equal (first (argv)) "--nogui")
       (loop (print (eval (read))))
       (progn
-        (setf ltk:*wish-pathname* (namestring *wish-binary*))
+        (setf ltk:*wish-pathname* (namestring (wish-binary)))
         (gui)))
   0)

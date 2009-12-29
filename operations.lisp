@@ -18,16 +18,24 @@
 
 ;;; Special variables
 
-(defvar *user-config-file* (merge-pathnames ".villarc" (user-homedir-pathname)))
-(defvar *user-config-dir* (merge-pathnames ".villa/" (user-homedir-pathname)))
 (defvar *options* (make-instance 'options))
-(defvar *wish-binary* (merge-pathnames "deps/bin/wish" (villa-dev-dir)))
-(defvar *abcm2ps-binary* (merge-pathnames "deps/bin/abcm2ps" (villa-dev-dir)))
+
+(defun user-config-file ()
+  (merge-pathnames ".villarc" (user-homedir-pathname)))
+
+(defun user-config-dir ()
+  (merge-pathnames ".villa/" (user-homedir-pathname)))
+
+(defun wish-binary ()
+  (merge-pathnames "deps/bin/wish" (villa-dev-dir)))
+
+(defun abcm2ps-binary ()
+  (merge-pathnames "deps/bin/abcm2ps" (villa-dev-dir)))
 
 (defun open-user-configuration ()
-  (ensure-directories-exist *user-config-dir*)
-  (when (file-exists-p *user-config-file*)
-    (with-open-file (in *user-config-file*)
+  (ensure-directories-exist (user-config-dir))
+  (when (file-exists-p (user-config-file))
+    (with-open-file (in (user-config-file))
       (with-standard-io-syntax
         (let1 config (read in)
           (setf (collections *options*) (rest (assoc :collections config)))
@@ -68,12 +76,12 @@
 
 (defun abc-to-ps (abc-file ps-file)
   ;; FIXME full pathname
-  (run-prog (namestring *abcm2ps-binary*)
+  (run-prog (namestring (abcm2ps-binary))
             :args (list "-m" ".5cm" "-r" "-J" "0" "-O" (namestring ps-file) (namestring abc-file))))
 
 (defun %output-pathname (score type)
   (concatenate 'string)
-  (make-pathname :directory (pathname-directory *user-config-dir*)
+  (make-pathname :directory (pathname-directory (user-config-dir))
                  :name (pathname-name (get-filename score))
                  :type type))
 
