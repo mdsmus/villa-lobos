@@ -54,9 +54,10 @@ villa:
 	mkdir villa
 
 dist: villa-lobos villa
-	cp villa-lobos villa
+	cp villa-lobos villa/
 	cp -Rv deps/bin villa/deps/
 	cp -Rv deps/lib villa/deps/
+	cp -Rv 371chorales villa/
 	tar czf villa.tar.gz villa
 
 deps/aristoxenus:

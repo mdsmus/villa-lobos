@@ -13,7 +13,8 @@
                                                    (default-directory)))))
 
 (defun villa-dev-dir ()
-  (asdf:component-pathname (asdf:find-system :villa-lobos)))
+  ;;(asdf:component-pathname (asdf:find-system :villa-lobos))
+  (current-directory))
 
 (defmacro make-easy-menu (list)
   (let ((menubar (gensym)))
