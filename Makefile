@@ -2,7 +2,7 @@ LISPFILES = $(wildcard *.lisp) $(wildcard *.asd)
 
 DEPS=deps
 ARISTOXENUS = $(DEPS)/aristoxenus/
-ALIEN = $(DEPS)/cl-distribution/src/
+ALIEN = $(DEPS)/alien/src/
 #CCL_BINARY = /usr/local/ccl/lx86cl
 CCL_BINARY = /usr/local/ccl/lx86cl64
 
@@ -63,18 +63,18 @@ dist: villa-lobos villa
 deps/aristoxenus:
 	mkdir -p deps/aristoxenus
 
-deps/cl-distribution:
-	mkdir -p deps/cl-distribution
+deps/alien:
+	mkdir -p deps/alien
 
-get-deps: deps/aristoxenus deps/cl-distribution
+get-deps: deps/aristoxenus deps/alien
 	wget -c -P deps http://kroger.genos.mus.br/villa/villa-deps.tar.gz
 	wget -c http://kroger.genos.mus.br/villa/371chorales.tar.gz
 	wget -c -O deps/aristoxenus.tar.gz http://git.genos.mus.br/cgit.cgi?url=aristoxenus/snapshot/aristoxenus-master.tar.gz
-	wget -c -O deps/cl-distribution.tar.gz http://git.genos.mus.br/cgit.cgi?url=cl-distribution/snapshot/cl-distribution-master.tar.gz
+	wget -c -O deps/alien.tar.gz http://git.genos.mus.br/cgit.cgi?url=alien/snapshot/alien-master.tar.gz
 	tar xzf 371chorales.tar.gz
 	cd deps && tar xzf villa-deps.tar.gz
 	cd deps && tar xzf aristoxenus.tar.gz -C aristoxenus
-	cd deps && tar xzf cl-distribution.tar.gz -C cl-distribution
+	cd deps && tar xzf alien.tar.gz -C alien
 
 backup:
 	rsync -av  --progress --stats --delete . /media/kroger/villa-lobos/
