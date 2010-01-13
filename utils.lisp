@@ -12,9 +12,11 @@
   (directory-namestring (truename (merge-pathnames (app-name)
                                                    (default-directory)))))
 
+;; FIXME to work on slime and command line
 (defun villa-dev-dir ()
-  ;;(asdf:component-pathname (asdf:find-system :villa-lobos))
-  (current-directory))
+  (asdf:component-pathname (asdf:find-system :villa-lobos))
+  ;;(current-directory)
+  )
 
 (defmacro make-easy-menu (list)
   (let ((menubar (gensym)))

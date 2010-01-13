@@ -51,7 +51,7 @@
   (setf (files *options*) list-of-files)
   (setf (scores *options*)
         (iter (for (file . tag) in (files *options*))
-              (collect (parse-humdrum-file file)))))
+              (collect (parse-humdrum-file file t)))))
 
 (defun open-collection (n)
   "Open the nth collection in collection list, where list is 1
