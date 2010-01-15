@@ -10,7 +10,9 @@
                  (:file "utils")
                  (:file "operations")
                  (:file "gui")
-                 (:file "main")))
+                 (:file "main")
+                 (:module "algorithms"
+                          :components ((:file "pardo")))))
 
 (defsystem :villa-lobos-tests
   :depends-on (:villa-lobos :unittest)
