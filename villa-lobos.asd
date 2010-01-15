@@ -12,7 +12,7 @@
                  (:file "gui")
                  (:file "main")
                  (:module "algorithms"
-                          :components ((:file "pardo")))))
+                          :components ((:file "pardo-birmingham")))))
 
 (defsystem :villa-lobos-tests
   :depends-on (:villa-lobos :unittest)
