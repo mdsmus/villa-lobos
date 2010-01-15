@@ -7,14 +7,8 @@
 (defclass options ()
   ((files :accessor files :initform nil)
    (scores :accessor scores :initform nil)
-   (analysis :accessor analysis :initform nil)
    (user-options :accessor user-options :initform nil)
    (collections :accessor collections :initform nil)))
-
-(defclass analysis ()
-  ((name :accessor name)
-   (spine :accessor spine)
-   (arguments :accessor arguments)))
 
 ;;; Special variables
 

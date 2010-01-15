@@ -43,6 +43,7 @@
             (declare (ignore event))
             (let1 score (get-score (first (filelist-get-selection gui)))
               (show-statistics score gui)
+              (harmonic-analysis :pardo score)
               (score-to-ps score)
               (display-insert-image gui (%output-pathname score "ps")))))
     

@@ -105,7 +105,9 @@
 
 (defmethod harmonic-analysis (algorithm (score score))
   (when (eql algorithm :pardo)
-    (mapcar #'grade-to-chord
-            (reduce #'tie-break
-                    (mapcar #'pardo (remove-if-not #'every-music-p (segments score)))
-                    :from-end t :initial-value nil))))
+    (let ((result (mapcar #'grade-to-chord
+                          (reduce #'tie-break
+                                  (mapcar #'pardo (remove-if-not #'every-music-p (segments score)))
+                                  :from-end t :initial-value nil)))
+          (analysis-hash (get-analysis score)))
+      (setf (gethash algorithm analysis-hash) result))))
