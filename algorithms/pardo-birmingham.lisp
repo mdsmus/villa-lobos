@@ -107,7 +107,7 @@
   (when (eql algorithm :pardo)
     (let ((result (mapcar #'grade-to-chord
                           (reduce #'tie-break
-                                  (mapcar #'pardo (remove-if-not #'every-music-p (segments score)))
+                                  (mapcar #'pardo (remove-if-not #'every-note-p (segments score)))
                                   :from-end t :initial-value nil)))
           (analysis-hash (get-analysis score)))
       (setf (gethash algorithm analysis-hash) result))))

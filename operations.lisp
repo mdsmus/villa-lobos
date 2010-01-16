@@ -71,7 +71,7 @@
 (defun abc-to-ps (abc-file ps-file)
   ;; FIXME full pathname
   (run-prog (namestring (abcm2ps-binary))
-            :args (list "-m" ".5cm" "-r" "-J" "0" "-O" (namestring ps-file) (namestring abc-file))))
+            :args (list "-r" "-J" "0" "-O" (namestring ps-file) (namestring abc-file))))
 
 (defun %output-pathname (score type)
   (concatenate 'string)
