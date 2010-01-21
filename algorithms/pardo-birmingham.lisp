@@ -17,6 +17,14 @@
     ("ø7" (3 14 21 37))
     ("°"  (3 14 21))))
 
+(defparameter *pardo-modes*
+  '(("M"  :major)
+    ("M7" :major 7)
+    ("m"  :minor)
+    ("°7" :dim 7-)
+    ("ø7" :dim 7)
+    ("°"  :dim)))
+
 (defstruct pardo-grade root result answer weighted-notes)
 
 (defun calculate-score (template weighted-notes)
@@ -101,7 +109,11 @@
 
 (defun grade-to-chord (grade)
   (destructuring-bind (note . type) (pardo-grade-answer grade)
-    (format nil "~:(~a~)~a" (code-to-string note :base40) (remove #\M type))))
+    (destructuring-bind (mode &optional 7th) (rest (assoc type *pardo-modes* :test #'equal))
+      (make-chord-label :root (code-to-string note :base40)
+                        :root-code note
+                        :mode mode
+                        :7th 7th))))
 
 (defmethod harmonic-analysis (algorithm (score score))
   (when (eql algorithm :pardo)
@@ -111,3 +123,4 @@
                                   :from-end t :initial-value nil)))
           (analysis-hash (get-analysis score)))
       (setf (gethash algorithm analysis-hash) result))))
+

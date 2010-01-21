@@ -11,6 +11,7 @@
                  (:file "operations")
                  (:file "gui")
                  (:file "main")
+                 (:file "evaluation")
                  (:module "algorithms"
                           :components ((:file "pardo-birmingham")))))
 
