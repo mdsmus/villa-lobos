@@ -124,3 +124,8 @@
           (analysis-hash (get-analysis score)))
       (setf (gethash algorithm analysis-hash) result))))
 
+(defmethod harmonic-analysis (algorithm (sonorities list))
+  ;; sonorities is a list of list of #<note>s
+  (when (eql algorithm :pardo)
+    (mapcar #'grade-to-chord
+            (reduce #'tie-break (mapcar #'pardo sonorities) :from-end t :initial-value nil))))
