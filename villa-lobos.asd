@@ -5,7 +5,7 @@
     :author "Pedro Kroger"
     :version "0.0"
     :serial t
-    :depends-on (:cl-extensions :ltk :swank :aristoxenus)
+    :depends-on (:cl-extensions :ltk :swank :aristoxenus :cl-libsvm)
     :components ((:file "packages")
                  (:file "utils")
                  (:file "operations")
@@ -13,7 +13,8 @@
                  (:file "main")
                  (:file "evaluation")
                  (:module "algorithms"
-                          :components ((:file "pardo-birmingham")))))
+                          :components ((:file "pardo-birmingham")
+                                       (:file "svm")))))
 
 (defsystem :villa-lobos-tests
   :depends-on (:villa-lobos :unittest)
